@@ -6,33 +6,71 @@ namespace WebAPIWithCrud.Services;
 
 public class ItemsService
 {
-    private static readonly List<Item> Items = new();
-    private static int _nextId = 1;
+    private readonly List<Items> _items = new();
+    private int _nextId = 1;
 
-    public IEnumerable<Item> GetAll() => Items;
+    public IEnumerable<Items> GetAll() => _items;
 
-    public Item? Get(int id) => Items.FirstOrDefault(item => item.Id == id);
-
-    public Item Create(Item item)
+    public Items? GetById(int id)
     {
-        item.Id = _nextId++;
-        Items.Add(item);
+        foreach (var item in _items)
+        {
+            if (item.Id == id)
+                return item;
+        }
+        return null;
+    }
+
+    public Items? GetByName(string name)
+    {
+        foreach (var item in _items)
+        {
+            if (item.Name == name)
+                return item;
+        }
+        return null;
+    }
+
+    public Items? Create(Items item)
+    {
+        item.Id = _nextId;
+        _nextId++;
+        _items.Add(item);
         return item;
     }
 
-    public bool Update(int id, Item item)
+    public bool Update(int id, Items item)
     {
-        var existing = Items.FirstOrDefault(x => x.Id == id);
-        if (existing == null) return false;
-        existing.Name = item.Name;
-        return true;
+        Items? existingItem = null;
+        {
+            foreach (Items candidate in _items)
+            {
+                if (candidate.Id == id)
+                {
+                    existingItem = candidate;
+                    break;
+                }
+            }
+
+            if (existingItem == null)
+                return false;
+
+            existingItem.Name = item.Name;
+            existingItem.Description = item.Description;
+            return true;
+        }
     }
 
     public bool Delete(int id)
     {
-        var item = Items.FirstOrDefault(x => x.Id == id);
-        if (item == null) return false;
-        Items.Remove(item);
-        return true;
+        for(int i = _items.Count - 1; i >= 0; i--)
+        {
+            if (_items[i].Id == id)
+            {
+                _items.RemoveAt(i);
+                return true;
+            }
+        }
+        return false;
     }
 }

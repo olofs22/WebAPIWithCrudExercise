@@ -18,33 +18,48 @@ public class ItemsController : ControllerBase
     }
 
     [HttpGet]
-    public ActionResult<IEnumerable<Item>> GetAll() => Ok(_itemsService.GetAll());
+    public ActionResult<IEnumerable<Items>> Get([FromQuery] string? name)
+    {
+        if (!string.IsNullOrWhiteSpace(name))
+        {
+            var item = _itemsService.GetByName(name);
+            if (item == null) return NotFound();
+            return Ok(new[] { item }); // eller Ok(item) om du vill returnera en Item
+        }
+
+        return Ok(_itemsService.GetAll());
+    }
+
 
     [HttpGet("{id:int}")]
-    public ActionResult<Item> Get(int id)
+    public ActionResult<Items> Get(int id)
     {
-        var item = _itemsService.Get(id);
-        return item == null ? NotFound() : Ok(item);
+        var item = _itemsService.GetById(id);
+        if (item == null)
+            return NotFound(); 
+        return Ok(item);
     }
 
     [HttpPost]
-    public ActionResult<Item> Create(Item item)
+    public ActionResult<Items> Create(Items item)
     {
-        var newItem = _itemsService.Create(item);
-        return Created($"/api/items/{newItem.Id}", newItem);
+        var created = _itemsService.Create(item);
+        return Created($"/api/items/{created.Id}", created);
     }
 
     [HttpPut("{id:int}")]
-    public ActionResult Update(int id, Item item)
+    public ActionResult Update(int id, Items item)
     {
-        if (!_itemsService.Update(id, item)) return NotFound();
+        if (!_itemsService.Update(id, item)) 
+            return NotFound();
         return NoContent();
     }
 
     [HttpDelete("{id:int}")]
     public ActionResult Delete(int id)
     {
-        if (!_itemsService.Delete(id)) return NotFound();
+        if (!_itemsService.Delete(id)) 
+            return NotFound();
         return NoContent();
     }
 
