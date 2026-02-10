@@ -1,3 +1,6 @@
+using FluentValidation;
+using FluentValidation.AspNetCore;
+using WebAPIWithCrud.Models;
 using WebAPIWithCrud.Services;
 
 namespace WebAPIWithCrud
@@ -8,7 +11,11 @@ namespace WebAPIWithCrud
         {
             var builder = WebApplication.CreateBuilder(args);
             // Add services to the container.
-            builder.Services.AddControllers();
+            builder.Services.AddControllers()
+                .AddFluentValidation();
+
+            builder.Services.AddScoped<IValidator<Items>, CreateUserRequestValidator>();
+
             // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
             builder.Services.AddOpenApi();
 
