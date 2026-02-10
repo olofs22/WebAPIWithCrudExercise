@@ -1,5 +1,8 @@
 using FluentValidation;
 using FluentValidation.AspNetCore;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+using WebAPIWithCrud.Data;
 using WebAPIWithCrud.Models;
 using WebAPIWithCrud.Services;
 
@@ -11,15 +14,16 @@ namespace WebAPIWithCrud
         {
             var builder = WebApplication.CreateBuilder(args);
             // Add services to the container.
+            builder.Services.AddScoped<ItemsService>();
+            builder.Services.AddDbContext<AppDbContext>(options =>
+                options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
             builder.Services.AddControllers()
                 .AddFluentValidation();
 
             builder.Services.AddScoped<IValidator<Items>, CreateUserRequestValidator>();
 
-            // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
             builder.Services.AddOpenApi();
-
-            builder.Services.AddSingleton<ItemsService>();
 
             var app = builder.Build();
 

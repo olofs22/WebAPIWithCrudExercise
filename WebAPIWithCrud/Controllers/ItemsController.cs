@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
-using WebAPIWithCrud.Models;
 using System.Linq;
+using WebAPIWithCrud.Data;
+using WebAPIWithCrud.Models;
 using WebAPIWithCrud.Services;
 
 namespace WebAPIWithCrud.Controllers;
@@ -9,10 +10,9 @@ namespace WebAPIWithCrud.Controllers;
 [Route("api/[controller]")]
 public class ItemsController : ControllerBase
 {
-
     private readonly ItemsService _itemsService;
 
-    public ItemsController(ItemsService itemsService)
+    public ItemsController(ItemsService itemsService)  // Single constructor
     {
         _itemsService = itemsService;
     }
