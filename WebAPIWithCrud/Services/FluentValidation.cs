@@ -11,9 +11,6 @@ namespace WebAPIWithCrud.Services
                 .NotEmpty()
                 .MinimumLength(1);
 
-            RuleFor(x => x.Id)
-                .NotEmpty();
-
             RuleFor(x => x.Description)
                 .MaximumLength(10);
         }
